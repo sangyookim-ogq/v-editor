@@ -1,4 +1,4 @@
-import { isEnter } from './KeyUtils'
+import { isEnter, isShift, isCtrl } from './KeyUtils'
 import _u from './Utils'
 
 class Core {
@@ -25,7 +25,8 @@ class Core {
   }
 
   onKeyDown(e) {
-    if (isEnter(e)) return this.onEnter(e)
+    this.preventNativeShortcuts(e)
+    if (isEnter(e) && !isShift(e)) return this.onEnter(e)
   }
 
   onEnter(e) {
@@ -33,6 +34,14 @@ class Core {
     _u.log("[KEYDOWN] Enter")
     const block = this.editor.createBlock()
     block.contentEditableEl.focus()
+  }
+
+  preventNativeShortcuts(e) {
+    if (!isCtrl(e)) return
+    
+    if (e.key.toLowerCase() === 'b' || e.keyCode === 66) {
+      e.preventDefault()
+    }
   }
 }
 
