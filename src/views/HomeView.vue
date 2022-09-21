@@ -1,18 +1,20 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="editor" ref="editor"></div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+// @ is an alias to /srcw
+import Editor from '@/editor/Editor'
 
 export default {
   name: 'HomeView',
+  mounted() {
+    const editor = new Editor('.editor')
+    console.log("editor", editor)
+  },
   components: {
-    HelloWorld
   }
 }
 </script>
