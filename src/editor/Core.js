@@ -1,6 +1,10 @@
+import { isEnter } from './KeyUtils'
+import _u from './Utils'
+
 class Core {
-  constructor(editorEl) {
-    this.editorEl = editorEl
+  constructor(editor) {
+    this.editor = editor
+    this.editorEl = editor.rootEl
     this.contentEditableEl = null
     this.init()
   }
@@ -17,7 +21,18 @@ class Core {
   }
 
   bindEvents() {
-    this.contentEditableEl.addEventListener('keydown', this.onKeyDown, false)
+    this.contentEditableEl.addEventListener('keydown', this.onKeyDown.bind(this), false)
+  }
+
+  onKeyDown(e) {
+    if (isEnter(e)) return this.onEnter(e)
+  }
+
+  onEnter(e) {
+    e.preventDefault()
+    _u.log("[KEYDOWN] Enter")
+    const block = this.editor.createBlock()
+    block.contentEditableEl.focus()
   }
 }
 

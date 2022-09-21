@@ -1,7 +1,6 @@
 import Core from './Core'
-import Utils from './Utils'
+import _u from './Utils'
 
-const _u = new Utils()
 
 class Editor {
   constructor(el) {
@@ -27,7 +26,13 @@ class Editor {
 
   initEditor() {
     _u.log("Welcome to OGQ Editor")
-    this.blocks.push(new Core(this.rootEl))
+    this.createBlock()
+  }
+
+  createBlock() {
+    const block = new Core(this)
+    this.blocks.push(block)
+    return block
   }
 }
 

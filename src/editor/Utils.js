@@ -10,4 +10,6 @@ class Utils {
   }
 }
 
-export default Utils
+const _u = new Utils()
+
+export default _u
