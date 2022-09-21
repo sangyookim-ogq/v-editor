@@ -1,3 +1,8 @@
+import Core from './Core'
+import Utils from './Utils'
+
+const _u = new Utils()
+
 class Editor {
   constructor(el) {
     if (el instanceof HTMLElement) {
@@ -8,18 +13,21 @@ class Editor {
         this.rootEl = elem
       } 
     } 
-
+    
     if (!this.rootEl) {
-      throw new Error("Editor requires a root element to be instantiated.", {
+      _u.error("Editor requires a root element to be instantiated.", {
         code: "ROOT_EL_NOT_FOUND"
       })
     }
     
+    this.blocks = []
+
     this.initEditor()
   }
 
   initEditor() {
-    console.log("Welcome to OGQ Editor")
+    _u.log("Welcome to OGQ Editor")
+    this.blocks.push(new Core(this.rootEl))
   }
 }
 
