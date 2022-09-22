@@ -1,6 +1,8 @@
 <template>
   <div class="home">
-    <div class="editor" ref="editor"></div>
+    <div class="editor-wrap">
+      <div class="editor" ref="editor"></div>
+    </div>
 
     <button v-on:click="log">
       LOG
@@ -11,6 +13,7 @@
 <script>
 // @ is an alias to /srcw
 import Editor from '@/editor/Editor'
+import '@/editor/editor.scss'
 
 export default {
   data() {
@@ -26,10 +29,24 @@ export default {
   methods: {
     log() {
       console.log(this.editor)
-      console.log(this.editor.blocks.map(({contentEditableEl})=> contentEditableEl))
+      console.log(this.editor.blocks.map(({editableEl})=> editableEl))
     }
   },
   components: {
   }
 }
 </script>
+
+
+<style lang="scss" scoped>
+
+.editor {
+  max-width: 768px;
+  width: 100%;
+  margin: 72px auto;
+  border: 1px solid #DEDEDE;
+  min-height: 300px;
+  padding: 8px;
+}
+
+</style>

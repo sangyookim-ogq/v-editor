@@ -1,15 +1,17 @@
-import { isEnter, isShift, isCtrl, isArrow } from './KeyUtils'
+import { isEnter, isShift, isCtrl, isArrow, isBackspace } from './KeyUtils'
 import _u from './Utils'
 import SelectionUtils from './SelectionUtils'
 import DOMUtils from './DOMUtils'
 
 class Core {
-  constructor(editor, props) {
-    const insertAfter = props.insertAfter || 0
+  constructor(editor, props={}) {
+    const insertAfter = props?.insertAfter || 0
     this.editor = editor
     this.editorEl = editor.rootEl
-    this.contentEditableEl = null
+    this.editableEl = null
+    this.blockEl = null
     this.index = insertAfter + 1
+    this.contentStr = props?.contentStr || ""
     this.init()
   }
 
@@ -18,28 +20,48 @@ class Core {
   }
 
   createContentEditable() {
-    this.contentEditableEl = document.createElement('div')
-    this.contentEditableEl.setAttribute('contenteditable', true)
+    
+    this.editableEl = document.createElement('div')
+    this.editableEl.className = "VEditor__block"
+    this.editableEl.innerHTML = this.contentStr
+    this.editableEl.setAttribute('contenteditable', true)
     if (!this.editor.blocks[0]) {
-      this.editorEl.appendChild(this.contentEditableEl)
+      this.editorEl.appendChild(this.editableEl)
     } else {
       DOMUtils.insertAfter(
-        this.contentEditableEl,
-        this.editor.blocks[this.index - 1].contentEditableEl
+        this.editableEl,
+        this.editor.blocks[this.index - 1].editableEl
       )
     }
     this.bindEvents()
   }
 
   bindEvents() {
-    this.contentEditableEl.addEventListener('keydown', this.onKeyDown.bind(this), false)
-    this.contentEditableEl.addEventListener('focus', this.onFocus.bind(this), false)
+    this.editableEl.addEventListener('keydown', this.onKeyDown.bind(this), false)
+    this.editableEl.addEventListener('focus', this.onFocus.bind(this), false)
   }
 
   onKeyDown(e) {
     this.preventNativeShortcuts(e)
     if (isEnter(e) && !isShift(e)) return this.onEnter(e)
     if (isArrow(e)) return this.onArrowKey(e.key)
+    if (isBackspace(e)) return this.onBackspace(e)
+  }
+
+  onBackspace(e) {
+    const selection = SelectionUtils.getSelection()
+    // const range = selection.getRangeAt(0)
+    // const commonAncestor = range.commonAncestorContainer
+    // _u.log('[onBackspace]', selection.anchorNode.nodeName, this.editableEl)
+    // _u.log(selection.getRangeAt(0))
+    // _u.log("Root is current editable el", commonAncestor === this.editableEl, commonAncestor )
+    if (selection.anchorNode.nodeName === '#text' && selection.anchorNode.parentNode === this.editableEl) {
+      // Is start of editable 
+      if (selection.isCollapsed && selection.anchorOffset === 0) {
+        e.preventDefault()
+        this.mergeIntoIndex(this.index - 1)
+      }
+    }
   }
 
   onArrowKey(arrowKey) {
@@ -69,14 +91,30 @@ class Core {
       // return _u.log("Is end block", amount, this.index)
     } else {
       // Navigate between blocks
-      this.editor.blocks[this.index + amount].contentEditableEl.focus()
+      this.editor.blocks[this.index + amount].editableEl.focus()
     }
+  }
+
+  mergeIntoIndex(targetIndex) {
+    const targetBlock = this.editor.blocks[targetIndex]
+    if (!targetBlock) return
+    const targetEditableEl = targetBlock.editableEl
+    const fragment = SelectionUtils.getFragmentAfterCaretInBlock(true)
+    const range = SelectionUtils.getRangeAtEndOfElement(targetEditableEl)
+    SelectionUtils.setCaretWithRange(range)
+    range.insertNode(fragment)
+    range.collapse(true)
+    targetEditableEl.normalize()
+  }
+
+  removeSelf() {
+    this.editor.removeBlockByIndex(this.index)
   }
 
   onEnter(e) {
     e.preventDefault()
     // const selection = SelectionUtils.getSelection()
-    const contentStr = SelectionUtils.getContentAfterCaretInBlock()
+    const contentStr = SelectionUtils.getContentAfterCaretInBlock(true)
     _u.log("[KEYDOWN] Enter", {
       contentStr,
       insertAfter: this.index
@@ -85,7 +123,7 @@ class Core {
       contentStr,
       insertAfter: this.index
     })
-    block.contentEditableEl.focus()
+    block.editableEl.focus()
   }
 
   preventNativeShortcuts(e) {

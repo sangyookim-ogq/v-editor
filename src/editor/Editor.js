@@ -50,6 +50,14 @@ class Editor {
   getCurrentBlockIndex() {
     return this.currentBlockIndex
   } 
+
+  removeBlockByIndex(index=0) {
+    this.blocks[index].editableEl.parentNode.removeChild(this.blocks[index].editableEl)
+    this.blocks.splice(index, 1)
+    this.blocks.forEach((b, i)=> {
+      b.index = i
+    })
+  }
 }
 
 

@@ -1,0 +1,6 @@
+.VEditor__block {
+  outline: 0;
+}
+.VEditor__block + .VEditor__block {
+  margin: 1rem 0 0;
+}

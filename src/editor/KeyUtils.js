@@ -10,6 +10,10 @@ const isCtrl = (e)=> {
   return e.ctrlKey || e.metaKey
 }
 
+const isBackspace = (e)=> {
+  return e.keyCode === 8 || e.key === 'Backspace'
+}
+
 const isArrow = (e)=> {
   return [37, 38, 39, 40].includes(e.keyCode) || e.key.startsWith('Arrow')
 }
@@ -18,5 +22,6 @@ export {
   isEnter,
   isShift,
   isCtrl,
-  isArrow
+  isArrow,
+  isBackspace
 }
