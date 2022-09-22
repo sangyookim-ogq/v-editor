@@ -1,3 +1,4 @@
+// https://javascript.info/selection-range
 import _u from './Utils'
 
 const SelectionUtils = {}
@@ -76,6 +77,22 @@ SelectionUtils.setCaretWithRange = (range)=> {
   const selection = SelectionUtils.getSelection()
   selection.removeAllRanges()
   selection.addRange(range)
+}
+
+SelectionUtils.setSelectionBold = ()=> {
+  // const selection = SelectionUtils.getSelection()
+  // const range = selection.getRangeAt(0)
+  // _u.log("NODENAME", range.commonAncestorContainer, range.startContainer, range.endContainer)
+  // if (range.startContainer.parentNode.nodeName === 'STRONG') {
+  //   _u.log("UNBOLD", {range, selection})
+  //   range.extractContents()
+  // } else {
+  //   _u.log("BOLD", {range, selection})
+  //   const bold = document.createElement('strong')
+  //   range.surroundContents(bold)
+  // }
+  document.execCommand('bold')
+  // range.commonAncestorContainer.normalize()
 }
 
 export default SelectionUtils

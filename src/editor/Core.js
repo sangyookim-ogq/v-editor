@@ -52,10 +52,13 @@ class Core {
     const selection = SelectionUtils.getSelection()
     // const range = selection.getRangeAt(0)
     // const commonAncestor = range.commonAncestorContainer
-    // _u.log('[onBackspace]', selection.anchorNode.nodeName, this.editableEl)
+    _u.log('[onBackspace]', selection.anchorNode, this.editableEl)
     // _u.log(selection.getRangeAt(0))
     // _u.log("Root is current editable el", commonAncestor === this.editableEl, commonAncestor )
-    if (selection.anchorNode.nodeName === '#text' && selection.anchorNode.parentNode === this.editableEl) {
+    if (
+        selection.anchorNode.nodeName === '#text' && selection.anchorNode.parentNode === this.editableEl ||
+        selection.anchorNode === this.editableEl
+      ) {
       // Is start of editable 
       if (selection.isCollapsed && selection.anchorOffset === 0) {
         e.preventDefault()
@@ -86,11 +89,14 @@ class Core {
 
     // Get selection and range
     if (this.index <= 0 && amount < 0) {
+      _u.log("Navigate case 1")
       // return _u.log("Is first block", amount, this.index)
     } else if (this.index >= (this.editor.blocks.length - 1) && amount > 0) {
+      _u.log("Navigate case 2")
       // return _u.log("Is end block", amount, this.index)
     } else {
       // Navigate between blocks
+      _u.log("Navigate case 3")
       this.editor.blocks[this.index + amount].editableEl.focus()
     }
   }
@@ -105,6 +111,7 @@ class Core {
     range.insertNode(fragment)
     range.collapse(true)
     targetEditableEl.normalize()
+    this.removeSelf()
   }
 
   removeSelf() {
@@ -132,6 +139,8 @@ class Core {
     // Prevent default bold execution
     if (e.key.toLowerCase() === 'b' || e.keyCode === 66) {
       e.preventDefault()
+      SelectionUtils.setSelectionBold()
+      this.editableEl.normalize()
     }
     // Prevent default italics execution
     if (e.key.toLowerCase() === 'i' || e.keyCode === 73) {
