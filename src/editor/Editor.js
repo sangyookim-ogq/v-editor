@@ -20,6 +20,7 @@ class Editor {
     }
     
     this.blocks = []
+    this.currentBlockIndex = null
 
     this.initEditor()
   }
@@ -29,11 +30,26 @@ class Editor {
     this.createBlock()
   }
 
-  createBlock() {
-    const block = new Core(this)
-    this.blocks.push(block)
+  createBlock(props) {
+    const contentStr = props?.contentStr || null
+    const insertAfter = props?.insertAfter != null ? props.insertAfter : this.blocks.length - 1
+
+    const block = new Core(this, {
+      contentStr,
+      insertAfter
+    })
+    this.blocks.splice(insertAfter + 1, 0, block)
+    
+    this.blocks.forEach((b, i)=> {
+      b.index = i
+    })
+
     return block
   }
+
+  getCurrentBlockIndex() {
+    return this.currentBlockIndex
+  } 
 }
 
 

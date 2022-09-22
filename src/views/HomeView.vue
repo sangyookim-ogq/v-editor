@@ -1,6 +1,10 @@
 <template>
   <div class="home">
     <div class="editor" ref="editor"></div>
+
+    <button v-on:click="log">
+      LOG
+    </button>
   </div>
 </template>
 
@@ -9,10 +13,21 @@
 import Editor from '@/editor/Editor'
 
 export default {
+  data() {
+    return {
+      editor: null
+    }
+  },
   name: 'HomeView',
   mounted() {
-    const editor = new Editor('.editor')
-    console.log("editor", editor)
+    this.editor = new Editor('.editor')
+    console.log("editor", this.editor)
+  },
+  methods: {
+    log() {
+      console.log(this.editor)
+      console.log(this.editor.blocks.map(({contentEditableEl})=> contentEditableEl))
+    }
   },
   components: {
   }

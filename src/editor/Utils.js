@@ -3,7 +3,14 @@ class Utils {
 
   }
   log(...args) {
-    console.log('[VEditor]', ...args)
+    const style = `
+      color: white;
+      padding: 2px 6px;
+      border-radius: 8px;
+      background-color: #770EFF;
+      font-weight: bold;
+    `
+    console.log('%cVEditor', style, ...args)
   }
   error(message, ...props) {
     throw new Error(message, ...props)
